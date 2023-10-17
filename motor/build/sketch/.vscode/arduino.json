@@ -1,0 +1,8 @@
+#line 1 "C:\\Users\\th072\\OneDrive\\바탕 화면\\수업내용\\iot\\motor\\.vscode\\arduino.json"
+{
+    "port": "COM3",
+    "board": "arduino:avr:uno",
+    "programmer": "avrisp",
+    "sketch": "motor.ino",
+    "output": "./build"
+}

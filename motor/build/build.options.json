@@ -1,0 +1,11 @@
+{
+  "additionalFiles": "..\\..\\..,..\\..\\..,..\\..,..\\..,..\\..",
+  "builtInToolsFolders": "",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "arduino:avr:uno",
+  "hardwareFolders": "C:\\Users\\th072\\AppData\\Local\\Arduino15\\packages",
+  "otherLibrariesFolders": "C:\\Users\\th072\\OneDrive\\문서\\Arduino\\libraries",
+  "runtime.ide.version": "10607",
+  "sketchLocation": "C:\\Users\\th072\\OneDrive\\바탕 화면\\수업내용\\iot\\motor"
+}

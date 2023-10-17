@@ -1,0 +1,5 @@
+{
+    "board": "arduino:avr:uno",
+    "sketch": "Voltmeter.ino",
+    "port": "COM3"
+}
