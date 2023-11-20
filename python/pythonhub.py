@@ -1,6 +1,7 @@
 from serial import Serial
 import time
 import os
+import db
 
 os.environ["PYTHONUNBUFFERED"] = "1"
 
@@ -10,8 +11,9 @@ class PythonHub:
         try:
             self.ser = Serial(comPort, baudrate, timeout=timeout)
             self.clearSerial()
-            self.clearVoltTuple()
-
+            self.dbObj = db.db()
+            self.volts = ()
+            self.voltTimes = ()
         except:
             print("Failed to open serial port:", comPort)
             print("Please check the port name and try again.")
@@ -52,14 +54,8 @@ class PythonHub:
         self.ser.flushInput()
         self.ser.flushOutput()
 
-    def run(self):
-        self.talk()
-
-    def close(self):
-        self.ser.close()
-
     def __del__(self):
-        self.close()
+        self.ser.close()
 
     def help(self):
         print("PythonHub Commands:")
@@ -71,10 +67,11 @@ class PythonHub:
 
     def getVolt(self):
         try:
-            volt = self.writeSerial("get", "volt")
-            volt = float(volt)
+            self.clearSerial()
+            volt = self.writeSerial("get","volt")
             return volt
-        except:
+        except Exception as e:
+            print("An error occurred: ", e)
             pass
 
     def getLight(self):
@@ -104,6 +101,34 @@ class PythonHub:
         except:
             pass
 
+    def saveVoltToDB(self):
+        try:
+            volt = self.getVolt()
+            times = int(time.time())
+            self.dbObj.insertData(times, volt)
+            
+        except:
+            pass
+        
+    def samplingVoltandSaveToDB(self, delay, count):
+        for i in range(count):
+            try:
+                self.volts += (self.getVolt(),)
+                self.voltTimes += (int(time.time()),)
+                time.sleep(delay)
+            except:
+                continue
+            
+    def loadFromDB(self):
+        for row in self.dbObj.selectData():
+            #add values in self.volt and self.time
+            self.volts += (row[1],)
+            self.voltTimes += (row[0],)
+        
+    def saveVoltTuplesToDB(self):
+        for volt, voltTime in zip(self.volts, self.voltTimes):
+            self.dbObj.insertData(voltTime, volt)
+        
     def addVoltTuple(self):
         volt = self.getVolt()
         voltTime = time.time()
@@ -115,7 +140,7 @@ class PythonHub:
             print("Failed to get voltage reading.")
             print("Please check the sensor connection.")
             return False
-
+        
     def clearVoltTuple(self):
         self.volts = ()
         self.voltTimes = ()
@@ -123,4 +148,4 @@ class PythonHub:
 
     def printVoltTuple(self):
         for volt, times in zip(self.volts, self.voltTimes):
-            print(f"volt: {volt:.2f}V, time: {time.ctime(times)}")
+            print(f"volt: {float(volt):.2f}V, time: {time.ctime(times)}")
